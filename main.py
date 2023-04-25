@@ -32,41 +32,44 @@ def main():
     shortcuts = inlt()
 
     paths = [0]
-    # Neighbor[i] = nodes that can reach i with a cost of 1
-    graph = [[1]]
+    # reachableFrom[i] = nodes that can reach i with a cost of 1
+    nodesFrom = [[1]]
+    nodesTo = [[1]]
 
     for i in range(n-2):
         paths.append(math.inf)
-        graph.append([i, i + 2])
+        nodesFrom.append([i, i + 2])
+        nodesTo.append([i, i + 2])
 
     paths.append(math.inf)
-    graph.append([n-2])
+    nodesFrom.append([n - 2])
+    nodesTo.append([n - 2])
 
     for i in range(n):
-        if i not in graph[shortcuts[i] - 1]:
-            graph[shortcuts[i] - 1].append(i)
+        nodeFrom = i
+        nodeTo = shortcuts[i] - 1
 
-    while True:
-        newIteration = paths.copy()
+        if nodeFrom not in nodesFrom[nodeTo]:
+            nodesFrom[nodeTo].append(nodeFrom)
 
-        for i in range(n):
-            newPath = newIteration[i]
+        if nodeTo not in nodesTo[nodeFrom]:
+            nodesTo[nodeFrom].append(nodeTo)
 
-            for neighbor in graph[i]:
-                newPath = min(newPath, newIteration[neighbor] + 1)
+    toVisit = nodesTo[0].copy()
 
-            newIteration[i] = newPath
+    while len(toVisit) != 0:
+        node = toVisit.pop()
 
-        if newIteration == paths:
-            break
+        oldPath = paths[node]
 
-        paths = newIteration
+        for neighbor in nodesFrom[node]:
+            paths[node] = min(paths[node], paths[neighbor] + 1)
 
-    # wrong = 10
-    # print(graph[wrong])
-    # print(paths[wrong])
+        if oldPath != paths[node]:
+            for nextNode in nodesTo[node]:
+                toVisit.append(nextNode)
+
     answer = ' '.join(str(path) for path in paths)
-    # print('#######')
     print(answer)
     # print(answer == EXPECTED_4)
 
