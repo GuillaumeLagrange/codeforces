@@ -67,7 +67,8 @@ def main():
 
         if oldPath != paths[node]:
             for nextNode in nodesTo[node]:
-                toVisit.append(nextNode)
+                if paths[nextNode] > paths[node] + 1:
+                    toVisit.append(nextNode)
 
     answer = ' '.join(str(path) for path in paths)
     print(answer)
